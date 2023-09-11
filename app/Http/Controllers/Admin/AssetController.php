@@ -12,6 +12,7 @@ use App\Models\AssetCategory;
 use App\Models\AssetLocation;
 use App\Models\AssetStatus;
 use App\Models\Brand;
+use App\Models\Departments;
 use App\Models\LicenseManagement;
 use App\Models\Supplier;
 use App\Models\User;
@@ -33,7 +34,7 @@ class AssetController extends Controller
     {
         abort_if(Gate::denies('asset_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $assets = Asset::with(['license', 'brand', 'category', 'supplier', 'status', 'location', 'assigned_to', 'team', 'media'])->get();
+        $assets = Asset::with(['license', 'brand', 'category', 'department', 'supplier', 'status', 'location', 'assigned_to', 'team', 'media'])->get();
 
         return view('admin.assets.index', compact('assets'));
     }
@@ -44,16 +45,16 @@ class AssetController extends Controller
         $licenses = LicenseManagement::all()->pluck('license', 'id')->prepend(trans('global.pleaseSelect'), '');
         $brands = Brand::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $categories = AssetCategory::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $departments = Departments::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $suppliers = Supplier::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $statuses = AssetStatus::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $locations = AssetLocation::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $assigned_tos = User::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-        return view('admin.assets.create', compact('licenses', 'brands', 'categories', 'suppliers', 'statuses', 'locations', 'assigned_tos'));
+        return view('admin.assets.create', compact('licenses', 'brands', 'categories', 'suppliers', 'statuses', 'locations', 'assigned_tos', 'departments'));
     }
 
     public function store(StoreAssetRequest $request)
     {
-        return $request;
         $asset = Asset::create($request->all());
 
         if ($request->input('photo', false)) {
@@ -77,13 +78,14 @@ class AssetController extends Controller
         $licenses = LicenseManagement::all()->pluck('license', 'id')->prepend(trans('global.pleaseSelect'), '');
         $brands = Brand::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $categories = AssetCategory::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $departments = Departments::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $suppliers = Supplier::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $statuses = AssetStatus::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $locations = AssetLocation::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $assigned_tos = User::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $asset->load('license', 'brand', 'category', 'supplier', 'status', 'location', 'assigned_to', 'team');
 
-        return view('admin.assets.edit', compact('licenses', 'brands', 'categories', 'suppliers', 'statuses', 'locations', 'assigned_tos', 'asset'));
+        return view('admin.assets.edit', compact('licenses', 'brands', 'categories', 'departments', 'suppliers', 'statuses', 'locations', 'assigned_tos', 'asset'));
     }
 
     public function update(UpdateAssetRequest $request, Asset $asset)
@@ -217,6 +219,8 @@ class AssetController extends Controller
                         $key = 'serial_number';
                     } else if ($keys[$j] == "Location") {
                         $key = 'location_id';
+                    } else if ($keys[$j] == "Department") {
+                        $key = 'department_id';
                     } else {
                         $key = $keys[$j];
                     }
@@ -232,6 +236,15 @@ class AssetController extends Controller
                         $location->save();
                     }
                     $rowAssoc['location_id'] = $location ? $location->id : null;
+                }
+                if ($rowAssoc['department_id'] !== null) {
+                    $department = Departments::where('name', $rowAssoc['department_id'])->first();
+                    if (!$department) {
+                        $department = new Departments();
+                        $department->name = $rowAssoc['department_id'];
+                        $department->save();
+                    }
+                    $rowAssoc['department_id'] = $department ? $department->id : null;
                 }
                 if ($rowAssoc['category_id'] !== null) {
                     $category = AssetCategory::where('name', $rowAssoc['category_id'])->first();
@@ -304,20 +317,14 @@ class AssetController extends Controller
         $dummyData = [
             ['Finance', 'Finance Office', 'Electronics', 'Laptop', 'High-performance laptop', 'L123', 5, 123456],
             ['HR', 'HR Office', 'Furniture', 'Desk', 'Wooden desk', 'D789', 2, 789012],
-            // Add more dummy data rows as needed
         ];
 
-        // Set the dummy data starting from the second row
         $sheet->fromArray($dummyData, null, 'A2');
 
-        // Create a temporary file to store the Excel data
         $tempFile = tempnam(sys_get_temp_dir(), 'excel');
 
-        // Save the spreadsheet to the temporary file
         $writer = new Xlsx($spreadsheet);
         $writer->save($tempFile);
-
-        // Set the response headers for downloading
         return response()->download($tempFile, 'excel-file.xlsx')->deleteFileAfterSend(true);
     }
 }

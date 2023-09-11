@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-body">                    
+                <div class="card-body">
                     <div class="form-group">
                         <label class="required" for="code">{{ trans('cruds.asset.fields.code') }}</label>
                         <input class="form-control {{ $errors->has('code') ? 'is-invalid' : '' }}" type="text" name="code" id="code" value="{{ old('code', '') }}" required>
@@ -69,6 +69,18 @@
                             <span class="text-danger">{{ $errors->first('category') }}</span>
                         @endif
                         <span class="help-block">{{ trans('cruds.asset.fields.category_helper') }}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="department_id">{{ trans('Department') }}</label>
+                        <select class="form-control select2 {{ $errors->has('department') ? 'is-invalid' : '' }}" name="department_id" id="department_id">
+                            @foreach($departments as $id => $department)
+                                <option value="{{ $id }}" {{ old('department_id') == $id ? 'selected' : '' }}>{{ $department }}</option>
+                            @endforeach
+                        </select>
+                        @if($errors->has('department'))
+                            <span class="text-danger">{{ $errors->first('department') }}</span>
+                        @endif
+                        {{-- <span class="help-block">{{ trans(' ') }}</span> --}}
                     </div>
                     <div class="form-group">
                         <label for="supplier_id">{{ trans('cruds.asset.fields.supplier') }}</label>
@@ -191,7 +203,7 @@
                         </button>
                     </div>
                 </div>
-            </div>            
+            </div>
         </div>
     </div>
 </form>

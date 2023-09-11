@@ -54,6 +54,7 @@ class Asset extends Model implements HasMedia
         'updated_at',
         'deleted_at',
         'team_id',
+        'department_id'
     ];
 
     public static function boot()
@@ -66,6 +67,10 @@ class Asset extends Model implements HasMedia
     {
         $this->addMediaConversion('thumb')->fit('crop', 50, 50);
         $this->addMediaConversion('preview')->fit('crop', 120, 120);
+    }
+
+    public function department(){
+        return $this->belongsTo(Departments::class, 'department_id', 'id');
     }
 
     public function getPhotoAttribute()

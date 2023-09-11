@@ -16,7 +16,7 @@
         </div>
         <!-- /.info-box -->
     </div>
-    
+
     <div class="col-md-3">
         <div class="info-box bg-primary">
             <span class="info-box-icon bg-red" style="display:flex; flex-direction: column; justify-content: center;">
@@ -105,16 +105,24 @@
                                         {{ $asset->category->name ?? '' }}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('Department') }}
+                                    </th>
+                                    <td>
+                                        {{ $asset->department->name ?? '' }}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-                </div>        
+                </div>
             </div>
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
                         <table class="table table-bordered table-striped">
-                            <tbody>                        
+                            <tbody>
                                 <tr>
                                     <th>
                                         {{ trans('cruds.asset.fields.supplier') }}
@@ -218,7 +226,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header" align="right">
-                        <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#putAsset">Put Asset to Location</a>                        
+                        <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#putAsset">Put Asset to Location</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -239,7 +247,7 @@
                                         <td>{{ $locations->quantity }}</td>
                                         <td>
                                             <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteLoc">Delete</a>
-                                            
+
                                             <form action="/admin/remove-asset-from-location" method="POST" enctype="multipart/form-data">
                                                 @csrf
                                                 <input type="hidden" name="asset_id" value="{{ $asset->id }}">
@@ -257,13 +265,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </form>                                            
+                                            </form>
                                         </td>
-                                    </tr>                                    
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
 
@@ -273,7 +281,7 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title">Put Asset to Location</h4>                                        
+                                    <h4 class="modal-title">Put Asset to Location</h4>
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
@@ -286,7 +294,7 @@
                                         <select name="asset_location_id" id="asset_location_id" class="form-control select2">
                                             @foreach ($asset_location as $assetLoc)
                                             <option value="{{ $assetLoc->id }}">{{ $assetLoc->name }}</option>
-                                            @endforeach                                        
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="form-group">
@@ -301,7 +309,7 @@
                             </div>
                         </div>
                     </div>
-                </form>                
+                </form>
 
             </div>
         </div>
@@ -529,7 +537,7 @@
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
-  
+
 })
 
 </script>

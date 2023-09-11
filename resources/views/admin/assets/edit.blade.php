@@ -5,7 +5,7 @@
     @method('PUT')
     @csrf
     <div class="form-group">
-        <input type="hidden" value="1" name="location_id">                        
+        <input type="hidden" value="1" name="location_id">
     </div>
     <div class="row">
         <div class="col-md-6">
@@ -70,6 +70,18 @@
                             <span class="text-danger">{{ $errors->first('category') }}</span>
                         @endif
                         <span class="help-block">{{ trans('cruds.asset.fields.category_helper') }}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="department_id">{{ trans('Department') }}</label>
+                        <select class="form-control select2 {{ $errors->has('department') ? 'is-invalid' : '' }}" name="department_id" id="department_id">
+                            @foreach($departments as $id => $department)
+                                <option value="{{ $id }}" {{ (old('department_id') ? old('department_id') : $asset->department->id ?? '') == $id ? 'selected' : '' }}>{{ $department }}</option>
+                            @endforeach
+                        </select>
+                        @if($errors->has('department'))
+                            <span class="text-danger">{{ $errors->first('department') }}</span>
+                        @endif
+                        {{-- <span class="help-block">{{ trans('cruds.asset.fields.category_helper') }}</span> --}}
                     </div>
                     <div class="form-group">
                         <label for="supplier_id">{{ trans('cruds.asset.fields.supplier') }}</label>
