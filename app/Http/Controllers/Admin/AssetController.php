@@ -34,7 +34,9 @@ class AssetController extends Controller
     {
         abort_if(Gate::denies('asset_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $assets = Asset::with(['license', 'brand', 'category', 'department', 'supplier', 'status', 'location', 'assigned_to', 'team', 'media'])->get();
+        $assets = Asset::with(['license', 'brand', 'category', 'department', 'supplier', 'status', 'location', 'assigned_to', 'team', 'media'])
+            ->latest()
+            ->get();
 
         return view('admin.assets.index', compact('assets'));
     }
@@ -271,29 +273,47 @@ class AssetController extends Controller
                 $rowAssoc["warranty_period"] = null;
                 $rowAssoc["depreciation"] = null;
 
-                $result[] = $rowAssoc;
 
-                if (!$rowAssoc['code'])
-                    $emptyCode++;
-            }
-
-            if ($emptyCode > 0) {
-                return redirect()->route('admin.assets.index')
-                    ->withErrors(['message' => 'The Model No/ Code column must not be empty.'])
-                    ->withInput();
-            }
-            for ($i = 0; $i < count($result); $i++) {
-                if (Asset::where('code', $result[$i]['code'])->first()) {
+                if (!$rowAssoc['code']) {
+                    $rowAssoc['code'] = $this->generateUniqueCode();
+                }
+                if (Asset::where('code', $rowAssoc['code'])->first()) {
                     return redirect()->route('admin.assets.index')
                         ->withErrors(['message' => 'The Model No/Code must be unique.'])
                         ->withInput();
                 }
-                $asset = Asset::create($result[$i]);
+                $asset = Asset::create($rowAssoc);
                 $total = $request->quantity * $request->unit_price;
                 $asset_update = Asset::where('id', $asset->id)->update(['total' => $total]);
+
             }
+
+            // for ($i = 0; $i < count($result); $i++) {
+                // if (Asset::where('code', $result[$i]['code'])->first()) {
+                //     return redirect()->route('admin.assets.index')
+                //         ->withErrors(['message' => 'The Model No/Code must be unique.'])
+                //         ->withInput();
+                // }
+                // $asset = Asset::create($result[$i]);
+                // $total = $request->quantity * $request->unit_price;
+                // $asset_update = Asset::where('id', $asset->id)->update(['total' => $total]);
+            // }
             return redirect()->route('admin.assets.index');
         }
+    }
+
+    public function generateUniqueCode()
+    {
+
+        $codes = Asset::pluck('code')->toArray();
+        $numericParts = array_filter(array_map(function ($code) {
+            return preg_replace('/[^0-9]/', '', $code);
+        }, $codes));
+
+        $maxNumeric = empty($numericParts) ? 0 : max($numericParts);
+        $uniqueNumber = $maxNumeric + 1;
+
+        return $uniqueNumber;
     }
 
     public function sampleExcelFile()
@@ -308,7 +328,7 @@ class AssetController extends Controller
             'Assets Category',
             'Assets Name',
             'Description',
-            'Model No/Code',
+            'Model No/ Code',
             'Qty',
             'EN NUMBER',
         ];

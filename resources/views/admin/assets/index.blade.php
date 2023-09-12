@@ -66,7 +66,7 @@
 
                         </td>
                         <td>
-                            {!! QrCode::size(80)->generate("$asset->code$asset->id") !!}
+                            {!! QrCode::size(80)->generate("$asset->code") !!}
                         </td>
                         <td>
                             @if($asset->photo)
