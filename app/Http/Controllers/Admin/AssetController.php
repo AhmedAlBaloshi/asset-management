@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use PDF;
 
 class AssetController extends Controller
 {
@@ -300,6 +302,16 @@ class AssetController extends Controller
             // }
             return redirect()->route('admin.assets.index');
         }
+    }
+
+    public function downloadQR(Request $request){
+        $ids = $request->input('ids');
+
+        $assets = Asset::with('department', 'category', 'location')->whereIn('id', $ids)->get();
+
+        // return view('admin.assets.pdf', compact('assets'));
+        $pdf = PDF::loadView('admin.assets.pdf', compact('assets'));
+        return $pdf->download('genrated.pdf');
     }
 
     public function generateUniqueCode()

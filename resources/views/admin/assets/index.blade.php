@@ -66,7 +66,13 @@
 
                         </td>
                         <td>
-                            {!! QrCode::size(80)->generate("$asset->code") !!}
+                            @php
+                            $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+                            $departCode = $asset->department?$asset->department->code.'-':'';
+                            $locationCode = $asset->location?$asset->location->code.'-':'';
+
+                        @endphp
+                        {!! $generator->getBarcode($departCode.$locationCode.$asset->code, $generator::TYPE_CODE_128, 2, 50) !!}
                         </td>
                         <td>
                             @if($asset->photo)
@@ -76,7 +82,7 @@
                             @endif
                         </td>
                         <td>
-                            {{ $asset->code ?? '' }}
+                            {{ $departCode.$locationCode.$asset->code ?? '' }}
                         </td>
                         <td>
                             {{ $asset->name ?? '' }}
@@ -143,8 +149,7 @@
     $(function() {
         let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
         @can('asset_delete')
-        let deleteButtonTrans = '{{ trans('
-        global.datatables.delete ') }}'
+        let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
         let deleteButton = {
             text: deleteButtonTrans
             , url: "{{ route('admin.assets.massDestroy') }}"
@@ -157,14 +162,12 @@
                 });
 
                 if (ids.length === 0) {
-                    alert('{{ trans('
-                        global.datatables.zero_selected ') }}')
+                    alert('{{ trans('global.datatables.zero_selected') }}')
 
                     return
                 }
 
-                if (confirm('{{ trans('
-                        global.areYouSure ') }}')) {
+                if (confirm('{{ trans('global.areYouSure') }}')) {
                     $.ajax({
                             headers: {
                                 'x-csrf-token': _token
@@ -184,6 +187,33 @@
         }
         dtButtons.push(deleteButton)
         @endcan
+
+        let downloadButtonTrans = '{{ trans("Download QRs") }}';
+let downloadButton = {
+    text: downloadButtonTrans,
+    className: 'btn-primary', // Change the class name to style the button as needed.
+    action: function(e, dt, node, config) {
+        var ids = $.map(dt.rows({
+            selected: true
+        }).nodes(), function(entry) {
+            return $(entry).data('entry-id');
+        });
+
+        if (ids.length === 0) {
+            alert('{{ trans('global.datatables.zero_selected') }}');
+            return;
+        }
+        let url = "{{ route('admin.assets.downloadQR') }}";
+        var queryString = ids.map(function(id) {
+  return 'ids%5B%5D=' + encodeURIComponent(id);
+}).join('&');
+
+        window.location.href = url+'?'+queryString
+    }
+};
+
+// Add the download button to the dtButtons array.
+dtButtons.push(downloadButton);
 
         $.extend(true, $.fn.dataTable.defaults, {
             orderCellsTop: true

@@ -21,6 +21,10 @@ class UpdateAssetLocationRequest extends FormRequest
                 'string',
                 'required',
             ],
+            'code' => [
+                'string',
+                'unique:asset_locations,code,'.$_POST['id'],
+            ],
         ];
     }
 }

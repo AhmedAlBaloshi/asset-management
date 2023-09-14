@@ -24,6 +24,7 @@ class AssetCategory extends Model
 
     protected $fillable = [
         'name',
+        'code',
         'created_at',
         'updated_at',
         'deleted_at',

@@ -50,7 +50,12 @@
                             </a>
                         @endif
                         &nbsp;&nbsp;
-                        {!! QrCode::size(80)->generate($asset->code) !!}
+                        @php
+                        $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+                         $departCode = $asset->department?$asset->department->code.'-':'';
+                            $locationCode = $asset->location?$asset->location->code.'-':'';
+                    @endphp
+                    {!! $generator->getBarcode($departCode.$locationCode.$asset->code, $generator::TYPE_CODE_128) !!}
                     </div>
                 </div>
                 <div class="card">
@@ -62,7 +67,7 @@
                                         {{ trans('cruds.asset.fields.code') }}
                                     </th>
                                     <td>
-                                        {{ $asset->code }}
+                                        {{ $departCode.$locationCode.$asset->code }}
                                     </td>
                                 </tr>
                                 <tr>

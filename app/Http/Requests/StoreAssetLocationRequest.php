@@ -21,6 +21,10 @@ class StoreAssetLocationRequest extends FormRequest
                 'string',
                 'required',
             ],
+            'code' => [
+                'unique:asset_locations,code',
+                'required',
+            ],
         ];
     }
 }

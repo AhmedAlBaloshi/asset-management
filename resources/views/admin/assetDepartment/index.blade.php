@@ -26,6 +26,9 @@
                             {{ trans('Name') }}
                         </th>
                         <th>
+                            {{ trans('Code') }}
+                        </th>
+                        <th>
                             &nbsp;
                         </th>
                     </tr>
@@ -38,6 +41,9 @@
                         </td>
                         <td>
                             {{ $assetDepartment->name ?? '' }}
+                        </td>
+                        <td>
+                            {{ $assetDepartment->code ?? '' }}
                         </td>
                         <td>
                             {{-- @can('asset_category_show') --}}

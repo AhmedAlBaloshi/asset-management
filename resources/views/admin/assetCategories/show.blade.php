@@ -23,6 +23,14 @@
                             {{ $assetCategory->name }}
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            {{ trans('Code') }}
+                        </th>
+                        <td>
+                            {{ $assetCategory->code }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div class="form-group">

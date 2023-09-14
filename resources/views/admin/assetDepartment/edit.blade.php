@@ -19,6 +19,14 @@
                 <span class="help-block">{{ trans(' ') }}</span>
             </div>
             <div class="form-group">
+                <label class="required" for="code" required>{{ trans('Code') }}</label>
+                <input class="form-control {{ $errors->has('code') ? 'is-invalid' : '' }}" type="text" name="code" id="code" value="{{ old('code', $department->code) }}" required>
+                @if($errors->has('code'))
+                    <span class="text-danger">{{ $errors->first('code') }}</span>
+                @endif
+                 <span class="help-block">{{ trans(' ') }}</span>
+            </div>
+            <div class="form-group">
                 <button class="btn btn-danger" type="submit">
                     {{ trans('global.save') }}
                 </button>

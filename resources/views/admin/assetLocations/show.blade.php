@@ -23,6 +23,14 @@
                             {{ $assetLocation->name }}
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            {{ trans('Code') }}
+                        </th>
+                        <td>
+                            {{ $assetLocation->code }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div class="form-group">

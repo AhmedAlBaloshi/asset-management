@@ -44,7 +44,8 @@ class AssetDepartmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|min:3'
+            'name' => 'required|min:3',
+            'code' => 'required|unique:asset_departments,code'
         ]);
         Departments::create($request->all());
 
@@ -91,7 +92,8 @@ class AssetDepartmentController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|min:3'
+            'name' => 'required|min:3',
+            'code' => 'required|unique:asset_departments,code,'.$id
         ]);
 
         $depart = Departments::findOrFail($id)->update($request->all());

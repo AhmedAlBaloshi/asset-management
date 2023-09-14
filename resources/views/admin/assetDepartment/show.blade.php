@@ -23,6 +23,14 @@
                             {{ $department->name }}
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            {{ trans('Code') }}
+                        </th>
+                        <td>
+                            {{ $department->code }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div class="form-group">

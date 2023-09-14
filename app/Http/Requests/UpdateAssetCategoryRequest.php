@@ -21,6 +21,10 @@ class UpdateAssetCategoryRequest extends FormRequest
                 'string',
                 'required',
             ],
+            'code' => [
+                'required',
+                'unique:asset_categories,code,'.$_POST['id'],
+            ],
         ];
     }
 }

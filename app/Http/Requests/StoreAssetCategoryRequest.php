@@ -21,6 +21,10 @@ class StoreAssetCategoryRequest extends FormRequest
                 'string',
                 'required',
             ],
+            'code' => [
+                'required',
+                'unique:asset_categories,code'
+            ],
         ];
     }
 }

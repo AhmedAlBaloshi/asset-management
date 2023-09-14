@@ -26,6 +26,9 @@
                             {{ trans('cruds.assetCategory.fields.name') }}
                         </th>
                         <th>
+                            {{ trans('Code') }}
+                        </th>
+                        <th>
                             &nbsp;
                         </th>
                     </tr>
@@ -38,6 +41,9 @@
                             </td>
                             <td>
                                 {{ $assetCategory->name ?? '' }}
+                            </td>
+                            <td>
+                                {{ $assetCategory->code ?? '' }}
                             </td>
                             <td>
                                 @can('asset_category_show')
@@ -118,7 +124,7 @@
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
-  
+
 })
 
 </script>

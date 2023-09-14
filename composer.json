@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "barryvdh/laravel-dompdf": "^2.0",
         "bugsnag/bugsnag-laravel": "^2.21",
         "doctrine/dbal": "^3.0",
         "fideloper/proxy": "^4.4",
@@ -21,6 +22,7 @@
         "laravel/ui": "^3.2",
         "laraveldaily/laravel-charts": "^0.1.24",
         "phpoffice/phpspreadsheet": "^1.29",
+        "picqer/php-barcode-generator": "^2.3",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-medialibrary": "^8.7"
     },

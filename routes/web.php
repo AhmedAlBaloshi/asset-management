@@ -38,6 +38,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Asset Category
     Route::delete('asset-categories/destroy', 'AssetCategoryController@massDestroy')->name('asset-categories.massDestroy');
     Route::resource('asset-categories', 'AssetCategoryController');
+    Route::put('asset-categories/{id}', 'AssetCategoryController@update')->name('admin.asset-categories.update');
 
     Route::delete('asset-departments/massDestroy', 'AssetDepartmentController@massDestroy')->name('asset-departments.massDestroy');
     Route::resource('asset-departments', 'AssetDepartmentController');
@@ -55,6 +56,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('assets/media', 'AssetController@storeMedia')->name('assets.storeMedia');
     Route::post('assets/ckmedia', 'AssetController@storeCKEditorImages')->name('assets.storeCKEditorImages');
     Route::post('assets/process-excel', 'AssetController@processExcel')->name('assets.processexcel');
+    Route::get('assets/downloadQR', 'AssetController@downloadQR')->name('assets.downloadQR');
     Route::resource('assets', 'AssetController');
 
     Route::get('/download-sample', 'AssetController@sampleExcelFile')->name('assets.sample');
@@ -116,4 +118,15 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 
         Route::post('profile', 'ChangePasswordController@updateProfile')->name('password.updateProfile');
         Route::post('profile/destroy', 'ChangePasswordController@destroy')->name('password.destroyProfile');
     }
+});
+
+Route::get('/clear-cache', function () {
+    // Clear cache and optimize as needed
+    \Artisan::call('optimize:clear');
+    \Artisan::call('config:clear');
+    \Artisan::call('config:cache');
+    \Artisan::call('cache:clear');
+    \Artisan::call('view:clear');
+
+    return 'Cache and configuration cleared successfully.';
 });
