@@ -304,14 +304,14 @@ class AssetController extends Controller
         }
     }
 
-    public function downloadQR(Request $request){
+    public function downloadBarCodes(Request $request){
         $ids = $request->input('ids');
 
         $assets = Asset::with('department', 'category', 'location')->whereIn('id', $ids)->get();
 
         // return view('admin.assets.pdf', compact('assets'));
         $pdf = PDF::loadView('admin.assets.pdf', compact('assets'));
-        return $pdf->download('genrated.pdf');
+        return $pdf->download('barcodes.pdf');
     }
 
     public function generateUniqueCode()
