@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,17 +6,23 @@
         body {
             margin: 0;
             padding: 0;
-            text-align: center; /* Center-align the content */
+            text-align: center;
+            /* Center-align the content */
         }
+
         .container {
-             /* Center-align the container */
-            display: inline-block; /* Ensure container doesn't stretch across the page */
+            /* Center-align the container */
+            display: inline-block;
+            /* Ensure container doesn't stretch across the page */
         }
+
     </style>
 </head>
 
 <body>
-    <center><h1 class="float-center">Bar Codes</h1></center>
+    <center>
+        <h1 class="float-center">Bar Codes</h1>
+    </center>
     <br><br><br><br><br><br><br>
 
     <ol style="list-style-type: none;">
@@ -29,14 +34,15 @@
             <!-- Use a container div to apply styles -->
             <div class="container">
                 @php
-                    $departCode = $asset->department?$asset->department->code.'-':'';
-                    $locationCode = $asset->location?$asset->location->code.'-':'';
-                    @endphp
-                {!! $generator->getBarcode($departCode.$locationCode.$asset->code, $generator::TYPE_CODE_128) !!}
+                $departCode = isset($asset->department->code)?$asset->department->code.'-':'';
+                $locationCode = isset($asset->location->code)?$asset->location->code.'-':'';
+                @endphp
+                {!! $generator->getBarcode($departCode.$locationCode.$asset->code, $generator::TYPE_CODE_128, 2, 50) !!}
             </div>
-                <br>{{ $departCode.$locationCode.$asset->code }}
+            <br>{{ $departCode.$locationCode.$asset->code }}
             <br><br><br><br><br><br><br>
         </li>
         @endforeach
     </ol>
-</body></html>
+</body>
+</html>

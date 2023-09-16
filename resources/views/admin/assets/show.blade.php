@@ -52,8 +52,8 @@
                         &nbsp;&nbsp;
                         @php
                         $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
-                         $departCode = $asset->department?$asset->department->code.'-':'';
-                            $locationCode = $asset->location?$asset->location->code.'-':'';
+                         $departCode = isset($asset->department->code)?$asset->department->code.'-':'';
+                            $locationCode = isset($asset->location->code)?$asset->location->code.'-':'';
                     @endphp
                     {!! $generator->getBarcode($departCode.$locationCode.$asset->code, $generator::TYPE_CODE_128) !!}
                     </div>

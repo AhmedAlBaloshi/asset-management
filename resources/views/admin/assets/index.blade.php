@@ -37,7 +37,7 @@
 
                         </th>
                         <th>
-                            QRCode
+                            BarCode
                         </th>
                         <th>
                             {{ trans('cruds.asset.fields.photo') }}
@@ -68,8 +68,8 @@
                         <td>
                             @php
                             $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
-                            $departCode = $asset->department?$asset->department->code.'-':'';
-                            $locationCode = $asset->location?$asset->location->code.'-':'';
+                            $departCode = isset($asset->department->code)?$asset->department->code.'-':'';
+                            $locationCode = isset($asset->location->code)?$asset->location->code.'-':'';
 
                         @endphp
                         {!! $generator->getBarcode($departCode.$locationCode.$asset->code, $generator::TYPE_CODE_128, 2, 50) !!}
@@ -188,7 +188,7 @@
         dtButtons.push(deleteButton)
         @endcan
 
-        let downloadButtonTrans = '{{ trans("Download QRs") }}';
+        let downloadButtonTrans = '{{ trans("Download BarCodes") }}';
 let downloadButton = {
     text: downloadButtonTrans,
     className: 'btn-primary', // Change the class name to style the button as needed.
@@ -203,7 +203,7 @@ let downloadButton = {
             alert('{{ trans('global.datatables.zero_selected') }}');
             return;
         }
-        let url = "{{ route('admin.assets.downloadQR') }}";
+        let url = "{{ route('admin.assets.download.barcodes') }}";
         var queryString = ids.map(function(id) {
   return 'ids%5B%5D=' + encodeURIComponent(id);
 }).join('&');
