@@ -287,24 +287,24 @@ class AssetController extends Controller
                 $asset = Asset::create($rowAssoc);
                 $total = $request->quantity * $request->unit_price;
                 $asset_update = Asset::where('id', $asset->id)->update(['total' => $total]);
-
             }
 
             // for ($i = 0; $i < count($result); $i++) {
-                // if (Asset::where('code', $result[$i]['code'])->first()) {
-                //     return redirect()->route('admin.assets.index')
-                //         ->withErrors(['message' => 'The Model No/Code must be unique.'])
-                //         ->withInput();
-                // }
-                // $asset = Asset::create($result[$i]);
-                // $total = $request->quantity * $request->unit_price;
-                // $asset_update = Asset::where('id', $asset->id)->update(['total' => $total]);
+            // if (Asset::where('code', $result[$i]['code'])->first()) {
+            //     return redirect()->route('admin.assets.index')
+            //         ->withErrors(['message' => 'The Model No/Code must be unique.'])
+            //         ->withInput();
+            // }
+            // $asset = Asset::create($result[$i]);
+            // $total = $request->quantity * $request->unit_price;
+            // $asset_update = Asset::where('id', $asset->id)->update(['total' => $total]);
             // }
             return redirect()->route('admin.assets.index');
         }
     }
 
-    public function downloadBarCodes(Request $request){
+    public function downloadBarCodes(Request $request)
+    {
         $ids = $request->input('ids');
 
         $assets = Asset::with('department', 'category', 'location')->whereIn('id', $ids)->get();
@@ -327,6 +327,78 @@ class AssetController extends Controller
 
         return $uniqueNumber;
     }
+
+    public function printShelfOrdersNew(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $assets = Asset::with('department', 'category', 'location')->whereIn('id', $ids)->get();
+
+        if (!empty($assets)) {
+
+            foreach ($assets as $key => $asset) {
+                $departCode = isset($asset->department->code) ? $asset->department->code . '-' : '';
+                $locationCode = isset($asset->location->code) ? $asset->location->code . '-' : '';
+                $row_invoice[] = $departCode . $locationCode . $asset->code;
+            }
+        }
+        $fields = array_merge(
+            array(
+                'key' => '8006da4d3bcd2d55159e703bb6f3a797',
+                'secret' => '414b9b94e2f3da74913af444f0460606',
+                'data' => array('orderid' => $row_invoice)
+            )
+        );
+        header("Content-type: application/pdf");
+        header("Content-Disposition: inline; filename=" . 'PT' . ".pdf");
+        echo $this->post('https://api.dalilee.net/pdf-adapter/public/index.php?op=shelf', $fields, array());
+        exit;
+    }
+
+    public function post($url, array $fields, array $headers, $header=false, $sslvar=false){
+        $connection = curl_init();
+        $fields_string = '';
+        if(@count($fields) > 0){
+//            foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+//            rtrim($fields_string, '&');
+            $fields_string = http_build_query($fields);
+        }
+        curl_setopt($connection, CURLOPT_URL, $url);
+        curl_setopt($connection,CURLOPT_POST, @count($fields));
+        curl_setopt($connection,CURLOPT_POSTFIELDS, $fields_string);
+        if(count($headers) > 0){
+            curl_setopt($connection, CURLOPT_HTTPHEADER, $headers);
+        }
+        if($header === true){
+            curl_setopt($connection, CURLOPT_HEADER, 1);
+        }else{
+            curl_setopt($connection, CURLOPT_HEADER, 0);
+        }
+        curl_setopt($connection, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($connection, CURLOPT_CONNECTTIMEOUT, 10);
+        if($header === true){
+            curl_setopt($connection, CURLOPT_SSL_VERIFYPEER, true);
+        }else{
+            curl_setopt($connection, CURLOPT_SSL_VERIFYPEER, false);
+        }
+        curl_setopt($connection, CURLOPT_FOLLOWLOCATION, true);
+        $content = curl_exec($connection);
+        if($header === true){
+            preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $content, $matches);
+            $headerCookies = array();
+            foreach($matches[1] as $item) {
+                parse_str($item, $cookie);
+                $headerCookies = array_merge($headerCookies, $cookie);
+            }
+//          list($this->headerResponses, $content) = explode("\r\n\r\n", $content, 2);
+            $header_len = curl_getinfo($connection, CURLINFO_HEADER_SIZE);
+            $headerResponses = substr($content, 0, $header_len);
+            $content = substr($content, $header_len);
+        }
+        curl_close($connection);
+        return $content;
+    }
+
 
     public function sampleExcelFile()
     {

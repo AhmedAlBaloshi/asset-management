@@ -56,7 +56,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('assets/media', 'AssetController@storeMedia')->name('assets.storeMedia');
     Route::post('assets/ckmedia', 'AssetController@storeCKEditorImages')->name('assets.storeCKEditorImages');
     Route::post('assets/process-excel', 'AssetController@processExcel')->name('assets.processexcel');
-    Route::get('assets/download-barcodes', 'AssetController@downloadBarCodes')->name('assets.download.barcodes');
+    Route::get('assets/download-barcodes', 'AssetController@printShelfOrdersNew')->name('assets.download.barcodes');
     Route::resource('assets', 'AssetController');
 
     Route::get('/download-sample', 'AssetController@sampleExcelFile')->name('assets.sample');
